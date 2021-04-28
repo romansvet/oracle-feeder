@@ -57,13 +57,6 @@ module.exports = {
       // recommend: professional plus(60second Updates): $80/month
       apiKey: '', // necessary
     },
-	exchangeratehost: {
-      symbols: fiatSymbols,
-      interval: 60 * 1000,
-      timeout: 5000,
-      // https://exchangerate.host/
-      apiKey: '', 
-    },
     alphavantage: {
       symbols: fiatSymbols.filter((symbol) => !symbol.includes('MNT')),
       interval: 60 * 1000,
