@@ -1,4 +1,4 @@
-import fetch from 'lib/fetch'
+import nodeFetch from 'node-fetch'
 import { errorHandler } from 'lib/error'
 import { toQueryString } from 'lib/fetch'
 import { num } from 'lib/num'
@@ -7,41 +7,40 @@ import { Quoter } from 'provider/base'
 
 interface Response {
   success: boolean
-  quotes: { [symbol: string]: number }
+  rates: { [symbol: string]: number }
   error?: Record<string, unknown> | string
 }
 
-export class CurrencyLayer extends Quoter {
+export class ExchangeRate extends Quoter {
   private async updatePrices(): Promise<void> {
     const params = {
-      access_key: this.options.apiKey,
-      source: 'KRW',
-      currencies: this.symbols
+      base: 'KRW',
+      symbols: this.symbols
         .map((symbol) => (symbol === 'KRW/SDR' ? 'XDR' : symbol.replace('KRW/', '')))
         .join(','),
     }
 
-    const response: Response = await fetch(
-      `https://apilayer.net/api/live?${toQueryString(params)}`,
+    const response: Response = await nodeFetch(
+      `https://api.exchangerate.host/latest?${toQueryString(params)}`,
       {
         timeout: this.options.timeout,
       }
     ).then((res) => res.json())
 
-    if (!response || !response.success || !response.quotes) {
+    if (!response || !response.success || !response.rates) {
       logger.error(
         `${this.constructor.name}: wrong api response`,
         response ? JSON.stringify(response) : 'empty'
       )
-      throw new Error('Invalid response from CurrencyLayer')
+      throw new Error('Invalid response from ExchangeRate')
     }
 
     // update last trades
-    for (const symbol of Object.keys(response.quotes)) {
-      const convertedSymbol = symbol.replace('KRW', 'KRW/')
+    for (const symbol of Object.keys(response.rates)) {
+      const convertedSymbol = symbol.replace(symbol, 'KRW/' + symbol)
       this.setPrice(
         convertedSymbol === 'KRW/XDR' ? 'KRW/SDR' : convertedSymbol,
-        num(response.quotes[symbol])
+        num(response.rates[symbol])
       )
     }
   }
@@ -53,4 +52,4 @@ export class CurrencyLayer extends Quoter {
   }
 }
 
-export default CurrencyLayer
+export default ExchangeRate
