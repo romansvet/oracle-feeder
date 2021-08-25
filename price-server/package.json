@@ -1,6 +1,6 @@
 {
   "name": "@terra-money/price-server",
-  "version": "1.4.3",
+  "version": "1.4.6",
   "main": "src/main.ts",
   "license": "Apache-2.0",
   "scripts": {
@@ -9,6 +9,9 @@
     "lint": "eslint '*/**/*.{js,ts,tsx}' --fix"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.0.2",
+    "@opentelemetry/exporter-prometheus": "^0.23.0",
+    "@opentelemetry/metrics": "^0.23.0",
     "@polka/send-type": "^0.5.2",
     "@sentry/node": "^6.0.2",
     "bignumber.js": "^9.0.1",
@@ -17,7 +20,6 @@
     "csv-writer": "^1.6.0",
     "date-fns": "^2.16.1",
     "form-data": "^3.0.0",
-    "gate-api": "file:gate-api-5.18.4.tgz",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
     "pako": "^2.0.3",
@@ -45,7 +47,7 @@
     "ts-jest": "^26.4.4"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   },
   "husky": {
     "hooks": {
